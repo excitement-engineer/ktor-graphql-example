@@ -44,11 +44,11 @@ private class Mutation: GraphQLMutationResolver {
         val account = env.getContext<Context>().account
 
         if (account == null) {
-            throw ClientError("You must be authenticated to perform this operation")
+            throw ClientException("You must be authenticated to perform this operation")
         }
 
         if (name.isEmpty()) {
-            throw ClientError("You must specify a non-empty name")
+            throw ClientException("You must specify a non-empty name")
         }
 
         account.name = name

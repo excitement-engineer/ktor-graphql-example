@@ -1,5 +1,7 @@
-import io.ktor.application.*
-import io.ktor.routing.route
+import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
+import io.ktor.application.ApplicationCallPipeline
+import io.ktor.application.call
 import io.ktor.routing.routing
 import ktor.graphql.config
 import ktor.graphql.graphQL
@@ -7,23 +9,19 @@ import ktor.graphql.graphQL
 fun Application.main() {
 
     routing {
-        route("/graphql") {
+        intercept(ApplicationCallPipeline.Call) {
+            authenticate()
+        }
 
-            intercept(ApplicationCallPipeline.Call) {
-                authenticate()
-            }
-
-            graphQL(schema) {
-                config {
-                    context = getContext(call)
-                    graphiql = true
-                    formatError = { formatError(this) }
-                }
+        graphQL("/graphql", schema) {
+            config {
+                context = getContext(call)
+                graphiql = true
+                formatError = formatErrorGraphQLError
             }
         }
     }
 }
-
 
 fun getContext(call: ApplicationCall): Context {
     var account: Account? = null
