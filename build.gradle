@@ -28,7 +28,7 @@ repositories {
 dependencies {
     compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "com.github.excitement-engineer:ktor-graphql:0.2.1"
+    compile "com.github.excitement-engineer:ktor-graphql:0.2.2"
     compile "com.graphql-java:graphql-java-tools:3.2.0"
     compile "com.google.code.gson:gson:2.8.0"
 
