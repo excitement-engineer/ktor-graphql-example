@@ -1,7 +1,11 @@
-import com.coxautodev.graphql.tools.GraphQLMutationResolver
-import com.coxautodev.graphql.tools.GraphQLQueryResolver
-import com.coxautodev.graphql.tools.SchemaParser
-import graphql.schema.DataFetchingEnvironment
+import graphql.schema.GraphQLSchema
+import graphql.schema.StaticDataFetcher
+import graphql.schema.idl.RuntimeWiring.newRuntimeWiring
+import graphql.schema.idl.SchemaGenerator
+import graphql.schema.idl.SchemaParser
+import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.idl.TypeRuntimeWiring
+
 
 private const val schemaDef = """
 
@@ -20,39 +24,37 @@ type Mutation {
 
 schema {
   query: Query
+  mutation: Mutation
 }
 """
 
-val schema = SchemaParser
-        .newParser()
-        .schemaString(schemaDef)
-        .resolvers(Query(), Mutation())
+var runtimeWiring = newRuntimeWiring()
+        .type("Query") { builder ->
+            builder.dataFetcher("viewer") { env ->
+                val authContext = env.getContext<Context>()
+                 authContext.account
+
+            }
+        }
+        .type("Mutation") { builder ->
+            builder.dataFetcher("updateName") { env ->
+                val account = env.getContext<Context>().account
+                        ?: throw ClientException("You must be authenticated to perform this operation")
+
+                val name = env.getArgument<String>("name")
+
+                if (name.isEmpty()) {
+                    throw ClientException("You must specify a non-empty name")
+                }
+
+                account.name = name
+                account
+            }
+        }
         .build()
-        .makeExecutableSchema()
 
-private class Query: GraphQLQueryResolver {
-    fun viewer(env: DataFetchingEnvironment): Account? {
-        val authContext = env.getContext<Context>()
-        return authContext.account
-    }
-}
+var schemaParser = SchemaParser()
+var typeDefinitionRegistry: TypeDefinitionRegistry = schemaParser.parse(schemaDef)
 
-private class Mutation: GraphQLMutationResolver {
-
-    fun updateName(name: String, env: DataFetchingEnvironment): Account {
-
-        val account = env.getContext<Context>().account
-
-        if (account == null) {
-            throw ClientException("You must be authenticated to perform this operation")
-        }
-
-        if (name.isEmpty()) {
-            throw ClientException("You must specify a non-empty name")
-        }
-
-        account.name = name
-
-        return account
-    }
-}
+var schemaGenerator: SchemaGenerator = SchemaGenerator()
+var graphQLSchema: GraphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring)
