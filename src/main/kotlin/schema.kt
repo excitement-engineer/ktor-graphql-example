@@ -1,13 +1,9 @@
-import graphql.schema.GraphQLSchema
-import graphql.schema.StaticDataFetcher
 import graphql.schema.idl.RuntimeWiring.newRuntimeWiring
 import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
-import graphql.schema.idl.TypeDefinitionRegistry
-import graphql.schema.idl.TypeRuntimeWiring
 
 
-private const val schemaDef = """
+private val schemaDef = SchemaParser().parse("""
 
 type Account {
     id: String
@@ -27,12 +23,13 @@ schema {
   mutation: Mutation
 }
 """
+)
 
 var runtimeWiring = newRuntimeWiring()
         .type("Query") { builder ->
             builder.dataFetcher("viewer") { env ->
                 val authContext = env.getContext<Context>()
-                 authContext.account
+                authContext.account
 
             }
         }
@@ -53,8 +50,4 @@ var runtimeWiring = newRuntimeWiring()
         }
         .build()
 
-var schemaParser = SchemaParser()
-var typeDefinitionRegistry: TypeDefinitionRegistry = schemaParser.parse(schemaDef)
-
-var schemaGenerator: SchemaGenerator = SchemaGenerator()
-var graphQLSchema: GraphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring)
+var graphQLSchema = SchemaGenerator().makeExecutableSchema(schemaDef, runtimeWiring)
