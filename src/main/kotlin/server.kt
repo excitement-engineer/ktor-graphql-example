@@ -13,7 +13,7 @@ fun Application.main() {
             authenticate()
         }
 
-        graphQL("/graphql", schema) {
+        graphQL("/graphql", graphQLSchema) {
             config {
                 context = getContext(call)
                 graphiql = true

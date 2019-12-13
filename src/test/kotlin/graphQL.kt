@@ -144,7 +144,10 @@ class GraphQLTest {
                          ],
                          "path":[
                             "updateName"
-                         ]
+                         ],
+                         "extensions": {
+                            "classification": "DataFetchingException"
+                         }
                       }
                    ]
                 }
@@ -192,7 +195,10 @@ class GraphQLTest {
                          ],
                          "path":[
                             "updateName"
-                         ]
+                         ],
+                         "extensions": {
+                            "classification":"DataFetchingException"
+                         }
                       }
                    ]
                 }
