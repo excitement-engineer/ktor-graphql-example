@@ -8,14 +8,14 @@ repositories {
     jcenter()
 }
 
-val ktor_version = "1.2.6"
+val ktor_version = "1.3.2"
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
     compile("io.ktor:ktor-server-netty:$ktor_version")
 
-    compile("com.graphql-java:graphql-java:13.0")
-    compile("com.github.excitement-engineer:ktor-graphql:1.0.0")
+    compile("com.graphql-java:graphql-java:14.0")
+    compile("com.github.excitement-engineer:ktor-graphql:2.0.0")
     compile("org.apache.logging.log4j:log4j-slf4j-impl:2.9.1")
 
     testImplementation("com.google.code.gson:gson:2.8.0")
