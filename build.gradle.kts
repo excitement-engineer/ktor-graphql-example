@@ -15,8 +15,8 @@ dependencies {
     compile("io.ktor:ktor-server-netty:$ktor_version")
 
     compile("com.graphql-java:graphql-java:14.0")
-    compile("com.github.excitement-engineer:ktor-graphql:2.0.0")
     compile("org.apache.logging.log4j:log4j-slf4j-impl:2.9.1")
+    compile("com.github.excitement-engineer:ktor-graphql:2.0.2")
 
     testImplementation("com.google.code.gson:gson:2.8.0")
     testImplementation("junit:junit:4.11")
